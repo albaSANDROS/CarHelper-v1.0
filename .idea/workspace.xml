@@ -60,7 +60,7 @@
       <option name="presentableId" value="Default" />
       <updated>1584210874524</updated>
       <workItem from="1584210880801" duration="332000" />
-      <workItem from="1584257628479" duration="7077000" />
+      <workItem from="1584257628479" duration="10792000" />
     </task>
     <servers />
   </component>
@@ -128,5 +128,9 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="413" y="118" key="extract.method.dialog/0.0.1366.728@0.0.1366.728" timestamp="1584260434981" />
+    <state x="339" y="157" key="run.anything.popup" timestamp="1584268452466">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="339" y="157" key="run.anything.popup/0.0.1366.728@0.0.1366.728" timestamp="1584268452466" />
   </component>
 </project>
