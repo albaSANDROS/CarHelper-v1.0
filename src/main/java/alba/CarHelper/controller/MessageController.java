@@ -34,6 +34,7 @@ public class MessageController {
                 .filter(message -> message.get("id").equals(id))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);
+
     }
 
     @PostMapping
