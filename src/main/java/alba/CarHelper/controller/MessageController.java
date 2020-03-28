@@ -1,6 +1,9 @@
 package alba.CarHelper.controller;
 
 import alba.CarHelper.exceptions.NotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.hibernate.validator.internal.util.logging.Messages;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("message")
+@Api(value="message resources", description = "crud operations")
+
 public class MessageController {
     private int counter = 4;
 
@@ -20,11 +25,13 @@ public class MessageController {
     }};
 
     @GetMapping
+    @ApiOperation(value="get messages", response = Iterable.class)
     public List<Map<String, String>> list() {
         return messages;
     }
 
     @GetMapping("{id}")
+    @ApiOperation(value="get id", response = Messages.class)
     public Map<String, String> getOne(@PathVariable String id) {
         return getMessage(id);
     }
@@ -38,6 +45,7 @@ public class MessageController {
     }
 
     @PostMapping
+    @ApiOperation(value="add messages", response = Iterable.class)
     public Map<String, String> create(@RequestBody Map<String, String> message) {
         message.put("id", String.valueOf(counter++));
 
@@ -47,6 +55,7 @@ public class MessageController {
     }
 
     @PutMapping("{id}")
+    @ApiOperation(value="edit messages", response = Iterable.class)
     public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String> message) {
         Map<String, String> messageFromDb = getMessage(id);
 
@@ -57,6 +66,7 @@ public class MessageController {
     }
 
     @DeleteMapping("{id}")
+    @ApiOperation(value="delete messages", response = Iterable.class)
     public void delete(@PathVariable String id) {
         Map<String, String> message = getMessage(id);
 
