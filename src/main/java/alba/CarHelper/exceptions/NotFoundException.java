@@ -7,12 +7,13 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.IOException;
 
 
-@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "There is no such messages")
+//@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "There is no such messages")
+//public class NotFoundException extends RuntimeException {
+//}
 public class NotFoundException extends RuntimeException {
-    @ExceptionHandler(IOException.class)
-    public ModelAndView handleIOException(IOException exception) {
-        ModelAndView modelAndView = new ModelAndView("/exception/catchedException");
-        modelAndView.addObject("message", exception.getMessage());
-        return modelAndView;
+
+    public NotFoundException() {
+
+        super("No data found");
     }
 }
