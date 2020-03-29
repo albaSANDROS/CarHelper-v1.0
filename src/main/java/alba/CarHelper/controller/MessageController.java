@@ -4,6 +4,7 @@ import alba.CarHelper.exceptions.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.internal.util.logging.Messages;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -71,5 +72,14 @@ public class MessageController {
         Map<String, String> message = getMessage(id);
 
         messages.remove(message);
+    }
+
+    @Controller
+    public class ExceptionController {
+
+        @RequestMapping(value = "/runtimeException", method = RequestMethod.GET)
+        public void throwException( ) {
+            throw new RuntimeException();
+        }
     }
 }
