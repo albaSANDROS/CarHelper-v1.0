@@ -4,17 +4,21 @@ import alba.CarHelper.exceptions.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.internal.util.logging.Messages;
+import org.slf4j.LoggerFactory;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import org.slf4j.Logger;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("message")
 @Api(value="message resources", description = "crud operations")
+
 
 public class MessageController {
     private int counter = 4;
@@ -82,4 +86,18 @@ public class MessageController {
             throw new RuntimeException();
         }
     }
+
+    @Component
+    public static class ScheduledTasks {
+
+        private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+
+        private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+        @Scheduled(fixedRate = 5000)
+        public void reportCurrentTime() {
+            log.info("The time is now {}", dateFormat.format(new Date()));
+        }
+    }
+
 }
