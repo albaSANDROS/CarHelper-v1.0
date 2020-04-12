@@ -89,15 +89,26 @@ public class MessageController {
 
     @Component
     public static class ScheduledTasks {
+        private int counter;
 
-        private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+         private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
         private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
         @Scheduled(fixedRate = 5000)
         public void reportCurrentTime() {
-            log.info("The time is now {}", dateFormat.format(new Date()));
+
+           log.info("Current time is now {}", dateFormat.format(new Date()));
         }
     }
 
+    @Scheduled(fixedRate = 5000)
+    public void PutScheduleInCollection(){
+
+        messages.add(new HashMap<String, String>(){{
+            put("id", String.valueOf(counter));
+            put("text", "New message");
+        }});
+        counter++;
+    }
 }
