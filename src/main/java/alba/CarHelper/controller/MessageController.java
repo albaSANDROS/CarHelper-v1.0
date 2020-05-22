@@ -1,18 +1,22 @@
 package alba.CarHelper.controller;
 
-import alba.CarHelper.exceptions.NotFoundException;
+import alba.CarHelper.domain.Message;
+import alba.CarHelper.repo.MessageRepo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.hibernate.validator.internal.util.logging.Messages;
-import org.slf4j.LoggerFactory;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -21,61 +25,51 @@ import java.util.*;
 
 
 public class MessageController {
-    private int counter = 4;
+    private final MessageRepo messageRepo;
 
-    private List<Map<String, String>> messages = new ArrayList<Map<String, String>>() {{
-        add(new HashMap<String, String>() {{ put("id", "1"); put("text", "First message"); }});
-        add(new HashMap<String, String>() {{ put("id", "2"); put("text", "Second message"); }});
-        add(new HashMap<String, String>() {{ put("id", "3"); put("text", "Third message"); }});
-    }};
+    @Autowired
+    public MessageController(MessageRepo messageRepo) {
+        this.messageRepo = messageRepo;
+    }
 
     @GetMapping
     @ApiOperation(value="get messages", response = Iterable.class)
-    public List<Map<String, String>> list() {
-        return messages;
+    public List<Message> list() {
+        return messageRepo.findAll();
     }
 
     @GetMapping("{id}")
     @ApiOperation(value="get id", response = Messages.class)
-    public Map<String, String> getOne(@PathVariable String id) {
-        return getMessage(id);
+
+    public Message getOne(@PathVariable("id") Message message) {
+        return message;
     }
 
-    private Map<String, String> getMessage(@PathVariable String id) {
-        return messages.stream()
-                .filter(message -> message.get("id").equals(id))
-                .findFirst()
-                .orElseThrow(NotFoundException::new);
 
-    }
 
     @PostMapping
     @ApiOperation(value="add messages", response = Iterable.class)
-    public Map<String, String> create(@RequestBody Map<String, String> message) {
-        message.put("id", String.valueOf(counter++));
+    public Message create(@RequestBody Message message) {
 
-        messages.add(message);
 
-        return message;
+        return messageRepo.save(message);
     }
 
     @PutMapping("{id}")
     @ApiOperation(value="edit messages", response = Iterable.class)
-    public Map<String, String> update(@PathVariable String id, @RequestBody Map<String, String> message) {
-        Map<String, String> messageFromDb = getMessage(id);
+    public Message update(
+            @PathVariable("id") Message messageFromDb,
+            @RequestBody Message message
+    ) {
+        BeanUtils.copyProperties(message, messageFromDb, "id");
 
-        messageFromDb.putAll(message);
-        messageFromDb.put("id", id);
-
-        return messageFromDb;
+        return messageRepo.save(messageFromDb);
     }
 
     @DeleteMapping("{id}")
     @ApiOperation(value="delete messages", response = Iterable.class)
-    public void delete(@PathVariable String id) {
-        Map<String, String> message = getMessage(id);
-
-        messages.remove(message);
+    public void delete(@PathVariable("id") Message message) {
+        messageRepo.delete(message);
     }
 
     @Controller
@@ -102,13 +96,4 @@ public class MessageController {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
-    public void PutScheduleInCollection(){
-
-        messages.add(new HashMap<String, String>(){{
-            put("id", String.valueOf(counter));
-            put("text", "New message");
-        }});
-        counter++;
-    }
 }
