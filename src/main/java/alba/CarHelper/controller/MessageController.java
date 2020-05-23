@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -25,7 +28,8 @@ import java.util.List;
 @RequestMapping("message")
 @Api(value="message resources", description = "crud operations")
 
-
+@EnableCaching
+@SpringBootApplication
 public class MessageController {
     private final MessageRepo messageRepo;
 
@@ -50,7 +54,8 @@ public class MessageController {
 
 
     @PostMapping
-    @ApiOperation(value="add messages", response = Iterable.class)
+    @ApiOperation(value="add messages + caching data", response = Iterable.class)
+    @Cacheable(cacheNames="messasge")
     public Message create(@RequestBody Message message) {
 
 
@@ -69,7 +74,7 @@ public class MessageController {
     }
 
     @DeleteMapping("{id}")
-    @ApiOperation(value="delete messages", response = Iterable.class)
+    @ApiOperation(value="delete messages + transactions", response = Iterable.class)
 
     @org.springframework.transaction.annotation
             .Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
