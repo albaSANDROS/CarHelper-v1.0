@@ -9,9 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -68,10 +70,25 @@ public class MessageController {
 
     @DeleteMapping("{id}")
     @ApiOperation(value="delete messages", response = Iterable.class)
+
+    @org.springframework.transaction.annotation
+            .Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRED)
     public void delete(@PathVariable("id") Message message) {
-        messageRepo.delete(message);
+         Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
+        try {
+            messageRepo.delete(message);
+            doExpensiveWork();
+        }catch(EmptyResultDataAccessException|InterruptedException e)
+        {
+
+            log.info(e.getMessage());
+        }
     }
 
+    private void doExpensiveWork() throws InterruptedException{
+        Thread.sleep(5000);
+        throw new RuntimeException();
+    }
     @Controller
     public class ExceptionController {
 
